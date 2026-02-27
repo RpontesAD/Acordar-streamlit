@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ping Sites
+      - name: Ping Streamlit App
         run: |
-          curl -L https://forminclusaocolaboraores-ewnykkvf9vn9b8qpvdpdyr.streamlit.app/
-          curl -L https://sistem-av-escritorio-qqlm4x6nq4drkkhbupxvcw.streamlit.app/
-          curl -L https://sistema-av-crud-e2wzacxchywdxbpdba3jzl.streamlit.app/
-          curl -L https://sistema-av-obra-qnma5exfzyya8rkdfkyq7i.streamlit.app/
-          curl -L https://sistema-rh-saldo-de-ferias.streamlit.app/
-          
+          curl -L \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+            --max-redirs 10 \
+            --connect-timeout 30 \
+            --silent --show-error \
+            https://forminclusaocolaboraores-ewnykkvf9vn9b8qpvdpdyr.streamlit.app/
+                
