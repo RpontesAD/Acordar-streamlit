@@ -10,22 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ping Streamlit App (Python)
+      - name: Ping Streamlit Apps (Python)
         run: |
           python - << 'EOF'
           import requests
       
-          url = "https://forminclusaocolaboraores-ewnykkvf9vn9b8qpvdpdyr.streamlit.app/"
+          urls = [
+              "https://forminclusaocolaboraores-ewnykkvf9vn9b8qpvdpdyr.streamlit.app/",
+              "https://sistema-rh-saldo-de-ferias.streamlit.app/",
+              "https://sistema-av-obra-qnma5exfzyya8rkdfkyq7i.streamlit.app/",
+              "https://sistema-av-crud-e2wzacxchywdxbpdba3jzl.streamlit.app/",
+              "https://sistem-av-escritorio-qqlm4x6nq4drkkhbupxvcw.streamlit.app/",
+          ]
       
-          try:
-              r = requests.get(
-                  url,
-                  headers={"User-Agent": "Mozilla/5.0"},
-                  timeout=30,
-                  allow_redirects=True,
-              )
-              print("Status:", r.status_code)
-          except Exception as e:
-              print("Erro:", e)
-              raise
+          headers = {"User-Agent": "Mozilla/5.0"}
+      
+          failures = 0
+      
+          for url in urls:
+              try:
+                  print(f"\n🔗 Pingando: {url}")
+                  r = requests.get(
+                      url,
+                      headers=headers,
+                      timeout=30,
+                      allow_redirects=True,
+                  )
+                  print(f"✅ Status: {r.status_code}")
+              except Exception as e:
+                  failures += 1
+                  print(f"❌ Erro em {url}: {e}")
+      
+          if failures:
+              raise Exception(f"{failures} sites falharam")
           EOF
