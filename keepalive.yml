@@ -1,0 +1,17 @@
+name: Keep Sites Awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Sites
+        run: |
+          curl -L https://forminclusaocolaboraores-ewnykkvf9vn9b8qpvdpdyr.streamlit.app/
+          curl -L https://SEU_OUTRO_SITE.com/
+          curl -L https://MAIS_UM_SITE.com/
