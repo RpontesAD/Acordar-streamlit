@@ -10,10 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ping Streamlit Apps (Python)
+      - name: Ping Streamlit Apps (Smart)
         run: |
           python - << 'EOF'
           import requests
+          import time
       
           urls = [
               "https://forminclusaocolaboraores-ewnykkvf9vn9b8qpvdpdyr.streamlit.app/",
@@ -23,24 +24,53 @@ jobs:
               "https://sistem-av-escritorio-qqlm4x6nq4drkkhbupxvcw.streamlit.app/",
           ]
       
-          headers = {"User-Agent": "Mozilla/5.0"}
+          headers = {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+              "Accept": "text/html,application/xhtml+xml",
+              "Connection": "keep-alive",
+          }
       
+          MAX_RETRIES = 3
           failures = 0
       
+          def ping_url(url):
+              for attempt in range(1, MAX_RETRIES + 1):
+                  try:
+                      start = time.time()
+                      response = requests.get(
+                          url,
+                          headers=headers,
+                          timeout=30,
+                          allow_redirects=True,
+                      )
+                      elapsed = time.time() - start
+      
+                      print(f"\n🔗 {url}")
+                      print(f"   Status: {response.status_code}")
+                      print(f"   Tempo: {elapsed:.2f}s")
+      
+                      # validação mais forte
+                      if response.status_code == 200 and len(response.text) > 500:
+                          print("   ✅ OK")
+                          return True
+                      else:
+                          print("   ⚠️ Resposta suspeita")
+      
+                  except Exception as e:
+                      print(f"   ❌ Tentativa {attempt} falhou: {e}")
+      
+                  time.sleep(5)
+      
+              return False
+      
+      
           for url in urls:
-              try:
-                  print(f"\n🔗 Pingando: {url}")
-                  r = requests.get(
-                      url,
-                      headers=headers,
-                      timeout=30,
-                      allow_redirects=True,
-                  )
-                  print(f"✅ Status: {r.status_code}")
-              except Exception as e:
+              success = ping_url(url)
+              if not success:
                   failures += 1
-                  print(f"❌ Erro em {url}: {e}")
       
           if failures:
               raise Exception(f"{failures} sites falharam")
+      
+          print("\n🚀 Todos os pings concluídos")
           EOF
